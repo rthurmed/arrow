@@ -8,7 +8,7 @@ function love.load()
   love.keyboard.setKeyRepeat(true)
   math.randomseed(6073061030592339)
 
-  love.physics.setMeter(274)
+  love.physics.setMeter(300)
   World = love.physics.newWorld(0, 9.81*32, true)
 
   PlayerX, PlayerY = 300, 300
@@ -17,6 +17,7 @@ function love.load()
   Arrows = {}
 
   FireDelay = 1 -- seconds
+  FireStrength = 0
 
   Zoom = 1
   IsFullscreen = false
@@ -66,9 +67,17 @@ function love.update(dt)
   end
 
   if FireDelay <= 0 and love.mouse.isDown(1) then
-    FireDelay = 1
+    FireStrength = FireStrength + dt * 4
+    if FireStrength > 1 then
+      FireStrength = 1
+    end
+  end
+
+  if FireStrength > 0 and not love.mouse.isDown(1) then
     local x, y = love.mouse.getPosition()
-    table.insert(Arrows, Arrow:new(World, PlayerX, PlayerY, x, y))
+    table.insert(Arrows, Arrow:new(World, PlayerX, PlayerY, x, y, FireStrength))
+    FireStrength = 0
+    FireDelay = 1
   end
 
   for key, arrow in pairs(Arrows) do arrow:update(dt) end

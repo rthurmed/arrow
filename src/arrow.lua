@@ -1,14 +1,15 @@
 Arrow = {}
 
-Arrow.DECAY = math.rad(15)
+Arrow.DECAY = math.rad(30)
+Arrow.MAX_FORCE = 3000
 
-function Arrow:new(world, x, y, dx, dy, force)
+function Arrow:new(world, x, y, dx, dy, strength)
   local that = {}
 
   that.world = world
 
   that.angle = math.atan2((dy - y), (dx - x))
-  that.force = force or 1500
+  that.force = strength and strength * Arrow.MAX_FORCE or Arrow.MAX_FORCE
 
   that.dx = math.cos(that.angle) * that.force
   that.dy = math.sin(that.angle) * that.force
