@@ -107,7 +107,8 @@ function love.draw()
       arrow = #Arrows,
       dt = LastDt,
       time = TimePassed,
-      FireDelay = FireDelay
+      FireDelay = FireDelay,
+      FPS = love.timer.getFPS()
     }
     Logger:draw()
   end
