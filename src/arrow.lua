@@ -22,6 +22,7 @@ function Arrow:new(world, x, y, dx, dy, strength)
   that.shape = love.physics.newRectangleShape(that.w, that.h)
   that.fixture = love.physics.newFixture(that.body, that.shape)
 
+  -- https://opengameart.org/content/arrow-1
   that.image = love.graphics.newImage('assets/arrow.png')
 
   self.__index = self
