@@ -1,4 +1,5 @@
 Util = require('util')
+Log = require('log')
 Arrow = require('src.arrow')
 
 DEBUG = os.getenv("DEBUG") or false
@@ -24,6 +25,8 @@ function love.load()
 
   LastDt = 0
   TimePassed = 0
+
+  Logger = Log:new()
 end
 
 function love.wheelmoved(x, y)
@@ -100,11 +103,12 @@ function love.draw()
   love.graphics.circle('fill', PlayerX, PlayerY, 10)
 
   if DEBUG then
-    Util.log(0, 0, {
+    Logger.info = {
       arrow = #Arrows,
       dt = LastDt,
       time = TimePassed,
       FireDelay = FireDelay
-    })
+    }
+    Logger:draw()
   end
 end
