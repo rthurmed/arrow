@@ -29,9 +29,9 @@ function love.load()
   Logger = Log:new()
 end
 
-function love.wheelmoved(x, y)
-  Zoom = Zoom + y / 8
-end
+-- function love.wheelmoved(x, y)
+--   Zoom = Zoom + y / 8
+-- end
 
 function love.keyreleased(key)
   if key == 'escape' then
