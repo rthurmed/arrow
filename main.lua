@@ -100,7 +100,10 @@ function love.draw()
   love.graphics.setColor(r, g, b, a)
 
   for key, arrow in pairs(Arrows) do arrow:draw() end
-  love.graphics.circle('fill', PlayerX, PlayerY, 10)
+  love.graphics.circle('fill', PlayerX, PlayerY, 20)
+
+  local mousex, mousey = love.mouse.getPosition()
+  love.graphics.circle('line', mousex, mousey, FireStrength * 20)
 
   if DEBUG then
     Logger.info = {
