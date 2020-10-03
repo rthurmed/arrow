@@ -14,16 +14,15 @@ function Arrow:new(world, x, y, dx, dy, strength)
   that.dx = math.cos(that.angle) * that.force
   that.dy = math.sin(that.angle) * that.force
 
-  that.h = 137
-  that.w = 17
+  that.h = 64
+  that.w = 16
+
+  that.animation = Util.newAnimation(love.graphics.newImage("assets/arrow.png"), that.w, that.h, 1 / 2)
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
   that.body:setMassData(8, 137, that.body:getMass(), that.body:getInertia())
   that.shape = love.physics.newRectangleShape(that.w, that.h)
   that.fixture = love.physics.newFixture(that.body, that.shape)
-
-  -- https://opengameart.org/content/arrow-1
-  that.image = love.graphics.newImage('assets/arrow.png')
 
   self.__index = self
   return setmetatable(that, self)
@@ -38,6 +37,8 @@ function Arrow:update(dt)
 
   self.body:setX(x + (self.dx * dt))
   self.body:setY(y + (self.dy * dt))
+
+  Util.advanceAnimationFrame(self.animation, dt)
 end
 
 function Arrow:draw()
@@ -45,7 +46,8 @@ function Arrow:draw()
   local nx, ny = cx + self.dx / 2, cy + self.dy / 2
   local rotation = self.angle + math.rad(90)
 
-  love.graphics.draw(self.image, cx, cy, rotation, 1, 1)
+  local spriteNum = math.floor(self.animation.currentTime / self.animation.duration * #self.animation.quads) + 1
+  love.graphics.draw(self.animation.spriteSheet, self.animation.quads[spriteNum], cx, cy, rotation, 1, 1)
 
   if DEBUG then
     love.graphics.points(cx, cy)
