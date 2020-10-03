@@ -1,12 +1,14 @@
 Arrow = {}
 
+Arrow.DECAY = math.rad(15)
+
 function Arrow:new(world, x, y, dx, dy, force)
   local that = {}
 
   that.world = world
 
   that.angle = math.atan2((dy - y), (dx - x))
-  that.force = force or 1000
+  that.force = force or 1500
 
   that.dx = math.cos(that.angle) * that.force
   that.dy = math.sin(that.angle) * that.force
@@ -27,9 +29,13 @@ end
 
 function Arrow:update(dt)
   local x, y = self.body:getPosition()
+
+  self.angle = self.angle + Arrow.DECAY * dt
+  self.dx = math.cos(self.angle) * self.force
+  self.dy = math.sin(self.angle) * self.force
+
   self.body:setX(x + (self.dx * dt))
   self.body:setY(y + (self.dy * dt))
-  -- self.body:applyForce(self.dx * dt, self.dy * dt)
 end
 
 function Arrow:draw()
