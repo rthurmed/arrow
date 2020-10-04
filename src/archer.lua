@@ -10,7 +10,7 @@ function Archer:new(world, x, y)
   that.h = 72
   that.w = 72
 
-  that.speed = 200 -- pixel per second
+  that.speed = 100
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
   that.shape = love.physics.newRectangleShape(that.w, that.h)
@@ -38,8 +38,10 @@ function Archer:updateMovement(dt)
   if love.keyboard.isDown('a') then mx = -1 end
   if love.keyboard.isDown('d') then mx =  1 end
 
-  self.body:setX(self.body:getX() + (mx * dt * self.speed))
-  self.body:setY(self.body:getY() + (my * dt * self.speed))
+  local dx = mx * dt * self.speed
+  local dy = my * dt * self.speed
+
+  self.body:applyLinearImpulse(dx, dy)
 end
 
 function Archer:updateShooting(dt)
@@ -82,8 +84,11 @@ function Archer:draw()
   local angle = math.atan2((my - cy), (mx - cx)) + math.rad(45)
 
   for key, arrow in pairs(self.arrows) do arrow:draw() end
-  love.graphics.rectangle('line', cx, cy, self.w, self.h)
-  -- self.body:getX(), self.body:getY()
+
+  love.graphics.push()
+  love.graphics.translate(self.body:getPosition())
+  love.graphics.polygon('line', self.shape:getPoints())
+  love.graphics.pop()
 
   local bowImage = self.bow.i0
 

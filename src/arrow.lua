@@ -1,7 +1,7 @@
 Arrow = {}
 
 Arrow.DECAY = math.rad(30)
-Arrow.MAX_FORCE = 3000
+Arrow.MAX_FORCE = 500
 
 function Arrow:new(world, x, y, dx, dy, strength)
   local that = {}
@@ -35,8 +35,7 @@ function Arrow:update(dt)
   self.dx = math.cos(self.angle) * self.force
   self.dy = math.sin(self.angle) * self.force
 
-  self.body:setX(x + (self.dx * dt))
-  self.body:setY(y + (self.dy * dt))
+  self.body:applyLinearImpulse(self.dx * dt, self.dy * dt)
 
   Util.advanceAnimationFrame(self.animation, dt)
 end
