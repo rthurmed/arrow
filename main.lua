@@ -1,6 +1,8 @@
 Util = require('util')
 Log = require('log')
+
 Arrow = require('src.arrow')
+Archer = require('src.archer')
 
 DEBUG = os.getenv("DEBUG") or false
 VOLUME = os.getenv("VOLUME") or 1
@@ -13,12 +15,8 @@ function love.load()
   World = love.physics.newWorld(0, 9.81*32, true)
 
   PlayerX, PlayerY = 300, 300
-  PlayerSpeed = 200 -- pixel per second
 
-  Arrows = {}
-
-  FireDelay = 1 -- seconds
-  FireStrength = 0
+  Player = Archer:new(World, PlayerX, PlayerY)
 
   Zoom = 1
   IsFullscreen = false
@@ -50,40 +48,7 @@ function love.update(dt)
 
   IsFullscreen = love.window.getFullscreen()
 
-  -- Moving logic
-  local mx, my = 0, 0
-
-  if love.keyboard.isDown('w') then my = -1 end
-  if love.keyboard.isDown('s') then my =  1 end
-  if love.keyboard.isDown('a') then mx = -1 end
-  if love.keyboard.isDown('d') then mx =  1 end
-
-  PlayerX = PlayerX + mx * dt * PlayerSpeed
-  PlayerY = PlayerY + my * dt * PlayerSpeed
-
-  -- Firing logic
-  if FireDelay > 0 then
-    FireDelay = FireDelay - dt
-    if FireDelay < 0 then
-      FireDelay = 0
-    end
-  end
-
-  if FireDelay <= 0 and love.mouse.isDown(1) then
-    FireStrength = FireStrength + dt * 4
-    if FireStrength > 1 then
-      FireStrength = 1
-    end
-  end
-
-  if FireStrength > 0 and not love.mouse.isDown(1) then
-    local x, y = love.mouse.getPosition()
-    table.insert(Arrows, Arrow:new(World, PlayerX, PlayerY, x, y, FireStrength))
-    FireStrength = 0
-    FireDelay = 1
-  end
-
-  for key, arrow in pairs(Arrows) do arrow:update(dt) end
+  Player:update(dt)
 
   World:update(dt)
 end
@@ -95,22 +60,21 @@ function love.draw()
   -- Delay Graphic Representation
   local r, g, b, a = love.graphics.getColor()
   love.graphics.setColor(1, 0, 0, 0.25)
-  local height = FireDelay * love.graphics.getHeight()
+  local height = Player.fireDelay * love.graphics.getHeight()
   love.graphics.rectangle('fill', 0, love.graphics.getHeight() - height, love.graphics.getWidth(), height)
   love.graphics.setColor(r, g, b, a)
 
-  for key, arrow in pairs(Arrows) do arrow:draw() end
-  love.graphics.circle('fill', PlayerX, PlayerY, 20)
+  Player:draw()
 
   local mousex, mousey = love.mouse.getPosition()
-  love.graphics.circle('line', mousex, mousey, FireStrength * 20)
+  love.graphics.circle('line', mousex, mousey, Player.fireStrength * 20)
 
   if DEBUG then
     Logger.info = {
-      arrow = #Arrows,
+      arrow = #Player.arrows,
       dt = LastDt,
       time = TimePassed,
-      FireDelay = FireDelay,
+      FireDelay = Player.fireDelay,
       FPS = love.timer.getFPS()
     }
     Logger:draw()
