@@ -18,6 +18,10 @@ function love.load()
 
   Player = Archer:new(World, PlayerX, PlayerY)
 
+  FloorBody = love.physics.newBody(World, 0, 0, "static")
+  FloorShape = love.physics.newEdgeShape(0, love.graphics.getHeight() - 100, love.graphics.getWidth(), love.graphics.getHeight() - 100)
+  FloorFixture = love.physics.newFixture(FloorBody, FloorShape)
+
   Zoom = 1
   IsFullscreen = false
 
@@ -75,6 +79,7 @@ function love.draw()
       dt = LastDt,
       time = TimePassed,
       FireDelay = Player.fireDelay,
+      FireStrength = Player.fireStrength,
       FPS = love.timer.getFPS()
     }
     Logger:draw()
