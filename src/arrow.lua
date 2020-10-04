@@ -20,7 +20,7 @@ function Arrow:new(world, x, y, dx, dy, strength)
   that.animation = Util.newAnimation(love.graphics.newImage("assets/arrow.png"), that.w, that.h, 1 / 2)
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
-  that.body:setMassData(8, 137, that.body:getMass(), that.body:getInertia())
+  that.body:setMassData(0, 64, that.body:getMass(), that.body:getInertia())
   that.shape = love.physics.newRectangleShape(that.w, that.h)
   that.fixture = love.physics.newFixture(that.body, that.shape)
 

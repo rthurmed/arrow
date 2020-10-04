@@ -58,7 +58,7 @@ function Archer:updateShooting(dt)
   end
 
   if self.fireStrength > 0 and not love.mouse.isDown(1) then
-    local mousex, mousey = love.mouse.getPosition()
+    local mousex, mousey = GetRelativeMouse()
     local playerx, playery = self.body:getWorldCenter()
 
     table.insert(self.arrows, Arrow:new(World, playerx, playery, mousex, mousey, self.fireStrength))
@@ -77,12 +77,13 @@ end
 
 function Archer:draw()
   local cx, cy = self.body:getWorldCenter()
-  local mx, my = love.mouse.getPosition()
+  local mx, my = GetRelativeMouse()
   local halfw = self.w / 2
   local angle = math.atan2((my - cy), (mx - cx)) + math.rad(45)
 
   for key, arrow in pairs(self.arrows) do arrow:draw() end
-  love.graphics.circle('fill', cx, cy, 20)
+  love.graphics.rectangle('line', cx, cy, self.w, self.h)
+  -- self.body:getX(), self.body:getY()
 
   local bowImage = self.bow.i0
 
