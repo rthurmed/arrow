@@ -23,6 +23,14 @@ function love.load()
   FloorShape = love.physics.newEdgeShape(0, 800, 1400, 800)
   FloorFixture = love.physics.newFixture(FloorBody, FloorShape)
 
+  LeftSideBody = love.physics.newBody(World, 0, 0, "static")
+  LeftSideShape = love.physics.newEdgeShape(0, 0, 0, 800)
+  LeftSideFixture = love.physics.newFixture(LeftSideBody, LeftSideShape)
+
+  RightSideBody = love.physics.newBody(World, 0, 0, "static")
+  RightSideShape = love.physics.newEdgeShape(1400, 0, 1400, 800)
+  RightSideFixture = love.physics.newFixture(RightSideBody, RightSideShape)
+
   Zoom = 1
   IsFullscreen = false
 
@@ -70,6 +78,8 @@ function love.draw()
 
   Player:draw()
   love.graphics.line(FloorShape:getPoints())
+  love.graphics.line(LeftSideShape:getPoints())
+  love.graphics.line(RightSideShape:getPoints())
 
   local mousex, mousey = GetRelativeMouse()
   love.graphics.circle('line', mousex, mousey, 20)
