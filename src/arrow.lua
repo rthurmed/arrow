@@ -1,6 +1,7 @@
 Arrow = {}
 
 Arrow.DECAY = math.rad(30)
+Arrow.FORCE_DECELERATE = 100 -- per second
 Arrow.MAX_FORCE = 500
 
 function Arrow:new(world, x, y, dx, dy, strength)
@@ -28,11 +29,23 @@ function Arrow:new(world, x, y, dx, dy, strength)
 end
 
 function Arrow:update(dt)
+  if self.force <= 0 then
+    return
+  end
+
   self.angle = self.angle + Arrow.DECAY * dt
+
   self.dx = math.cos(self.angle) * self.force
   self.dy = math.sin(self.angle) * self.force
 
   self.body:applyLinearImpulse(self.dx * dt, self.dy * dt)
+
+  local nforce = self.force - Arrow.FORCE_DECELERATE * dt
+  if nforce < 0 then
+    self.force = 0
+  else
+    self.force = nforce
+  end
 
   Util.advanceAnimationFrame(self.animation, dt)
 end
