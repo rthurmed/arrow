@@ -13,7 +13,7 @@ function love.load()
   math.randomseed(6073061030592339)
 
   love.physics.setMeter(300)
-  World = love.physics.newWorld(0, 9.81*32, true)
+  World = love.physics.newWorld(0, 9.81*300, true)
 
   PlayerX, PlayerY = 300, 300
 
@@ -82,7 +82,7 @@ function love.draw()
   love.graphics.line(RightSideShape:getPoints())
 
   local mousex, mousey = GetRelativeMouse()
-  love.graphics.circle('line', mousex, mousey, 20)
+  love.graphics.circle('line', mousex, mousey, 23)
   love.graphics.circle('fill', mousex, mousey, Player.fireStrength * 20)
 
   love.graphics.pop()
@@ -96,6 +96,7 @@ function love.draw()
   love.graphics.rectangle('fill', 0, love.graphics.getHeight() - height, 20, height)
   love.graphics.setColor(r, g, b, a)
 
+  local px, py = Player.body:getPosition()
   if DEBUG then
     Logger.info = {
       arrow = #Player.arrows,
@@ -103,7 +104,8 @@ function love.draw()
       time = TimePassed,
       FireDelay = Player.fireDelay,
       FireStrength = Player.fireStrength,
-      FPS = love.timer.getFPS()
+      FPS = love.timer.getFPS(),
+      PlayerPosition = px .. ', ' .. py
     }
     Logger:draw()
   end
@@ -113,7 +115,7 @@ end
 function GetCameraPosition()
   local px, py = Player.body:getPosition()
   local ww, wh = love.window.getMode()
-  return ww / 2 - px, wh / 2 - py
+  return ww / 2 - px, love.graphics.getHeight() * 0.7 - py
 end
 
 function GetRelativeMouse()
