@@ -37,6 +37,8 @@ function love.load()
   LastDt = 0
   TimePassed = 0
 
+  Paused = false
+
   Logger = Log:new()
 end
 
@@ -53,9 +55,17 @@ function love.keyreleased(key)
   if key == 'f11' then
     love.window.setFullscreen(not IsFullscreen, 'desktop')
   end
+
+  if key == 'p' then
+    Paused = not Paused
+  end
 end
 
 function love.update(dt)
+  if Paused then
+    return
+  end
+
   LastDt = dt
   TimePassed = TimePassed + dt
 
