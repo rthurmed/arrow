@@ -20,8 +20,7 @@ function Arrow:new(world, x, y, dx, dy, strength)
   that.animation = Util.newAnimation(love.graphics.newImage("assets/arrow.png"), that.w, that.h, 1 / 2)
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
-  that.body:setMassData(0, 64, that.body:getMass(), that.body:getInertia())
-  that.shape = love.physics.newRectangleShape(that.w, that.h)
+  that.shape = love.physics.newRectangleShape(that.w, that.w)
   that.fixture = love.physics.newFixture(that.body, that.shape)
 
   self.__index = self
@@ -29,8 +28,6 @@ function Arrow:new(world, x, y, dx, dy, strength)
 end
 
 function Arrow:update(dt)
-  local x, y = self.body:getPosition()
-
   self.angle = self.angle + Arrow.DECAY * dt
   self.dx = math.cos(self.angle) * self.force
   self.dy = math.sin(self.angle) * self.force
@@ -42,15 +39,21 @@ end
 
 function Arrow:draw()
   local cx, cy = self.body:getPosition()
-  local nx, ny = cx + self.dx / 2, cy + self.dy / 2
+  local aimx, aimy = cx + self.dx / 2, cy + self.dy / 2
+  local halfw = self.w / 2
   local rotation = self.angle + math.rad(90)
 
   local spriteNum = math.floor(self.animation.currentTime / self.animation.duration * #self.animation.quads) + 1
-  love.graphics.draw(self.animation.spriteSheet, self.animation.quads[spriteNum], cx, cy, rotation, 1, 1)
+  love.graphics.draw(self.animation.spriteSheet, self.animation.quads[spriteNum], cx, cy, rotation, 1, 1, halfw, halfw)
 
   if DEBUG then
     love.graphics.points(cx, cy)
-    love.graphics.line(cx, cy, nx, ny)
+    love.graphics.line(cx, cy, aimx, aimy)
+
+    love.graphics.push()
+    love.graphics.translate(self.body:getPosition())
+    love.graphics.polygon('line', self.shape:getPoints())
+    love.graphics.pop()
   end
 end
 
