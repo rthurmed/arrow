@@ -3,6 +3,7 @@ Log = require('log')
 
 Arrow = require('src.arrow')
 Archer = require('src.archer')
+Categories = require('src.categories')
 
 DEBUG = os.getenv("DEBUG") or false
 VOLUME = os.getenv("VOLUME") or 1
@@ -22,14 +23,17 @@ function love.load()
   FloorBody = love.physics.newBody(World, 0, 0, "static")
   FloorShape = love.physics.newEdgeShape(0, 800, 1400, 800)
   FloorFixture = love.physics.newFixture(FloorBody, FloorShape)
+  FloorFixture:setCategory(Categories.wall)
 
   LeftSideBody = love.physics.newBody(World, 0, 0, "static")
   LeftSideShape = love.physics.newEdgeShape(0, 0, 0, 800)
   LeftSideFixture = love.physics.newFixture(LeftSideBody, LeftSideShape)
+  LeftSideFixture:setCategory(Categories.wall)
 
   RightSideBody = love.physics.newBody(World, 0, 0, "static")
   RightSideShape = love.physics.newEdgeShape(1400, 0, 1400, 800)
   RightSideFixture = love.physics.newFixture(RightSideBody, RightSideShape)
+  RightSideFixture:setCategory(Categories.wall)
 
   Zoom = 1
   IsFullscreen = false
@@ -109,13 +113,9 @@ function love.draw()
   local px, py = Player.body:getPosition()
   if DEBUG then
     Logger.info = {
-      arrow = #Player.arrows,
       dt = LastDt,
       time = TimePassed,
-      FireDelay = Player.fireDelay,
-      FireStrength = Player.fireStrength,
-      FPS = love.timer.getFPS(),
-      PlayerPosition = px .. ', ' .. py
+      FPS = love.timer.getFPS()
     }
     Logger:draw()
   end

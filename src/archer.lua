@@ -1,4 +1,5 @@
 Arrow = require('src.arrow')
+Categories = require('src.categories')
 
 Archer = {}
 
@@ -15,6 +16,7 @@ function Archer:new(world, x, y)
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
   that.shape = love.physics.newRectangleShape(that.w, that.h)
   that.fixture = love.physics.newFixture(that.body, that.shape)
+  that.fixture:setCategory(Categories.player)
 
   that.bow = {
     i0 = love.graphics.newImage('assets/bow0.png'),
@@ -63,7 +65,7 @@ function Archer:updateShooting(dt)
     local mousex, mousey = GetRelativeMouse()
     local playerx, playery = self.body:getWorldCenter()
 
-    table.insert(self.arrows, Arrow:new(World, playerx, playery, mousex, mousey, self.fireStrength))
+    table.insert(self.arrows, Arrow:new(World, playerx, playery - self.h, mousex, mousey, self.fireStrength))
 
     self.fireStrength = 0
     self.fireDelay = 1
@@ -85,6 +87,7 @@ function Archer:draw()
 
   for key, arrow in pairs(self.arrows) do arrow:draw() end
 
+  -- Move to debug when with sprites
   love.graphics.push()
   love.graphics.translate(self.body:getPosition())
   love.graphics.polygon('line', self.shape:getPoints())
@@ -101,6 +104,16 @@ function Archer:draw()
   end
 
   love.graphics.draw(bowImage, cx, cy, angle, 1, 1, halfw, halfw)
+
+  if DEBUG then
+    Util.log(cx, cy, {
+      con = #self.body:getContacts(),
+      fireDelay = self.fireDelay,
+      fireStrength = self.fireStrength,
+      arrow = #self.arrows,
+      position = cx .. ', ' .. cy
+    })
+  end
 end
 
 return Archer

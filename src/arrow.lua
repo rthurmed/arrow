@@ -1,8 +1,11 @@
+Util = require('util')
+Categories = require('src.categories')
+
 Arrow = {}
 
-Arrow.DECAY = math.rad(30)
-Arrow.FORCE_DECELERATE = 100 -- per second
-Arrow.MAX_FORCE = 500
+Arrow.DECAY = math.rad(45)
+Arrow.FORCE_DECELERATE = 1 -- per second
+Arrow.MAX_FORCE = 20
 
 function Arrow:new(world, x, y, dx, dy, strength)
   local that = {}
@@ -12,41 +15,38 @@ function Arrow:new(world, x, y, dx, dy, strength)
   that.angle = math.atan2((dy - y), (dx - x))
   that.force = strength and strength * Arrow.MAX_FORCE or Arrow.MAX_FORCE
 
+  that.flying = true
+
   that.dx = math.cos(that.angle) * that.force
   that.dy = math.sin(that.angle) * that.force
 
   that.h = 64
   that.w = 16
 
-  that.animation = Util.newAnimation(love.graphics.newImage("assets/arrow.png"), that.w, that.h, 1 / 2)
+  that.animation = Util.newAnimation(love.graphics.newImage("assets/arrow.png"), that.w, that.h, 1 / 4)
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
   that.shape = love.physics.newRectangleShape(that.w, that.w)
   that.fixture = love.physics.newFixture(that.body, that.shape)
+  that.fixture:setCategory(Categories.arrow)
+  that.fixture:setMask(Categories.player)
+
+  that.body:applyLinearImpulse(that.dx, that.dy)
 
   self.__index = self
   return setmetatable(that, self)
 end
 
 function Arrow:update(dt)
-  if self.force <= 0 then
+  if self.flying and #self.body:getContacts() > 0 then
+    self.flying = false
+  end
+
+  if not self.flying then
     return
   end
 
   self.angle = self.angle + Arrow.DECAY * dt
-
-  self.dx = math.cos(self.angle) * self.force
-  self.dy = math.sin(self.angle) * self.force
-
-  self.body:applyLinearImpulse(self.dx * dt, self.dy * dt)
-
-  local nforce = self.force - Arrow.FORCE_DECELERATE * dt
-  if nforce < 0 then
-    self.force = 0
-  else
-    self.force = nforce
-  end
-
   Util.advanceAnimationFrame(self.animation, dt)
 end
 
@@ -67,6 +67,12 @@ function Arrow:draw()
     love.graphics.translate(self.body:getPosition())
     love.graphics.polygon('line', self.shape:getPoints())
     love.graphics.pop()
+
+    Util.log(cx, cy, {
+      con = #self.body:getContacts(),
+      force = self.force,
+      flying = self.flying and 'flying' or 'not flying'
+    })
   end
 end
 
