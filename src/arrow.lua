@@ -26,20 +26,35 @@ function Arrow:new(world, x, y, dx, dy, strength)
   that.animation = Util.newAnimation(love.graphics.newImage("assets/arrow.png"), that.w, that.h, 1 / 4)
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
-  that.shape = love.physics.newRectangleShape(that.w, that.w)
+  that.shape = love.physics.newCircleShape(that.w / 2)
   that.fixture = love.physics.newFixture(that.body, that.shape)
   that.fixture:setCategory(Categories.arrow)
-  that.fixture:setMask(Categories.player)
+  that.fixture:setMask(Categories.player, Categories.arrow)
 
   that.body:applyLinearImpulse(that.dx, that.dy)
+
+  that.joint = nil
 
   self.__index = self
   return setmetatable(that, self)
 end
 
+function Arrow:weld()
+  local contact = self.body:getContacts()[1]
+  local fixtureA, fixtureB = contact:getFixtures()
+  local x1, y1, x2, y2 = contact:getPositions()
+  if x1 ~= nil then
+    self.joint = love.physics.newWeldJoint(fixtureA:getBody(), fixtureB:getBody(), x1, y1, false)
+  end
+end
+
 function Arrow:update(dt)
   if self.flying and #self.body:getContacts() > 0 then
-    self.flying = false
+    self:weld()
+
+    if self.joint ~= nil then
+      self.flying = false
+    end
   end
 
   if not self.flying then
@@ -63,10 +78,7 @@ function Arrow:draw()
     love.graphics.points(cx, cy)
     love.graphics.line(cx, cy, aimx, aimy)
 
-    love.graphics.push()
-    love.graphics.translate(self.body:getPosition())
-    love.graphics.polygon('line', self.shape:getPoints())
-    love.graphics.pop()
+    love.graphics.circle('line', cx, cy, self.w / 2)
 
     Util.log(cx, cy, {
       con = #self.body:getContacts(),
