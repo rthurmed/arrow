@@ -82,7 +82,7 @@ end
 
 function love.draw()
   love.graphics.scale(Zoom)
-  love.graphics.setBackgroundColor(120 / 255, 120 / 255, 120 / 255, 1)
+  love.graphics.setBackgroundColor(66 / 255, 35 / 255, 83 / 255, 1)
 
   -- Game elements
   love.graphics.push()
@@ -105,7 +105,7 @@ function love.draw()
 
   -- Delay Graphic Representation
   local r, g, b, a = love.graphics.getColor()
-  love.graphics.setColor(1, 0, 0, 1)
+  love.graphics.setColor(214 / 255, 37 / 255, 80 / 255, 1)
   local height = Player.fireDelay * love.graphics.getHeight()
   love.graphics.rectangle('fill', 0, love.graphics.getHeight() - height, 20, height)
   love.graphics.setColor(r, g, b, a)
