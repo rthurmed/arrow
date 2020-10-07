@@ -6,6 +6,7 @@ Archer = {}
 Archer.ROPE_PULL_SPEED = 400
 Archer.ROPE_MIN_LENGTH = 100
 Archer.ROPE_MAX_LENGTH = 1200
+Archer.JUMP_MAX_HEIGHT = 1000
 
 function Archer:new(world, x, y)
   local that = {}
@@ -50,6 +51,10 @@ function Archer:updateMovement(dt)
   local dy = my * dt * self.speed
 
   self.body:applyLinearImpulse(dx, dy)
+
+  if love.keyboard.isDown('space') then
+    self.body:setY(self.body:getY() - Archer.JUMP_MAX_HEIGHT * dt)
+  end
 
   if love.keyboard.isDown('q') and not self.rope:isDestroyed() then
     self.rope:destroy()
