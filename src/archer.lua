@@ -3,6 +3,10 @@ Categories = require('src.categories')
 
 Archer = {}
 
+Archer.ROPE_PULL_SPEED = 400
+Archer.ROPE_MIN_LENGTH = 100
+Archer.ROPE_MAX_LENGTH = 1200
+
 function Archer:new(world, x, y)
   local that = {}
 
@@ -28,15 +32,17 @@ function Archer:new(world, x, y)
   that.fireDelay = 1 -- seconds
   that.fireStrength = 0
 
+  that.rope = nil
+
   self.__index = self
   return setmetatable(that, self)
 end
 
 function Archer:updateMovement(dt)
-  local mx, my = 0, 0
+  local mx, my, ry = 0, 0 , 0
 
-  -- if love.keyboard.isDown('w') then my = -1 end
-  -- if love.keyboard.isDown('s') then my =  1 end
+  if love.keyboard.isDown('w') then ry = -1 end
+  if love.keyboard.isDown('s') then ry =  1 end
   if love.keyboard.isDown('a') then mx = -1 end
   if love.keyboard.isDown('d') then mx =  1 end
 
@@ -44,6 +50,18 @@ function Archer:updateMovement(dt)
   local dy = my * dt * self.speed
 
   self.body:applyLinearImpulse(dx, dy)
+
+  if love.keyboard.isDown('q') and not self.rope:isDestroyed() then
+    self.rope:destroy()
+  end
+
+  if self.rope ~= nil and not self.rope:isDestroyed() then
+    local nlen = self.rope:getMaxLength() + ry * dt * Archer.ROPE_PULL_SPEED
+
+    if nlen > Archer.ROPE_MIN_LENGTH and nlen < Archer.ROPE_MAX_LENGTH then
+      self.rope:setMaxLength(nlen)
+    end
+  end
 end
 
 function Archer:updateShooting(dt)
@@ -65,7 +83,14 @@ function Archer:updateShooting(dt)
     local mousex, mousey = GetRelativeMouse()
     local playerx, playery = self.body:getWorldCenter()
 
-    table.insert(self.arrows, Arrow:new(World, playerx, playery - self.h, mousex, mousey, self.fireStrength))
+    local arrow = Arrow:new(World, playerx, playery, mousex, mousey, self.fireStrength)
+    table.insert(self.arrows, arrow)
+
+    if self.rope ~= nil and not self.rope:isDestroyed() then
+      self.rope:destroy()
+    end
+
+    self.rope = love.physics.newRopeJoint(self.body, arrow.body, playerx, playery, playerx, playery, 1000, false)
 
     self.fireStrength = 0
     self.fireDelay = 1
@@ -105,13 +130,18 @@ function Archer:draw()
 
   love.graphics.draw(bowImage, cx, cy, angle, 1, 1, halfw, halfw)
 
+  if self.rope ~= nil and not self.rope:isDestroyed() then
+    love.graphics.line(self.rope:getAnchors())
+  end
+
   if DEBUG then
     Util.log(cx, cy, {
       con = #self.body:getContacts(),
       fireDelay = self.fireDelay,
       fireStrength = self.fireStrength,
       arrow = #self.arrows,
-      position = cx .. ', ' .. cy
+      position = cx .. ', ' .. cy,
+      rope = self.rope and not self.rope:isDestroyed() and self.rope:getMaxLength() or 0
     })
   end
 end
