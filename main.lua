@@ -3,6 +3,7 @@ Log = require('log')
 
 Arrow = require('src.arrow')
 Archer = require('src.archer')
+Crate = require('src.crate')
 Categories = require('src.categories')
 
 DEBUG = os.getenv("DEBUG") or false
@@ -34,6 +35,18 @@ function love.load()
   RightSideShape = love.physics.newEdgeShape(1400, 0, 1400, 800)
   RightSideFixture = love.physics.newFixture(RightSideBody, RightSideShape)
   RightSideFixture:setCategory(Categories.wall)
+
+  MiddleBody = love.physics.newBody(World, 500, 500, "static")
+  MiddleShape = love.physics.newRectangleShape(100, 100)
+  MiddleFixture = love.physics.newFixture(MiddleBody, MiddleShape)
+  MiddleFixture:setCategory(Categories.wall)
+
+  Crates = {
+    Crate:new(World, 500, 400, 50, 50),
+    Crate:new(World, 800, 400, 100, 100),
+    Crate:new(World, 850, 100, 100, 100),
+    Crate:new(World, 900, 400, 100, 100)
+  }
 
   Zoom = 1
   IsFullscreen = false
@@ -94,6 +107,13 @@ function love.draw()
   love.graphics.line(FloorShape:getPoints())
   love.graphics.line(LeftSideShape:getPoints())
   love.graphics.line(RightSideShape:getPoints())
+
+  love.graphics.push()
+  love.graphics.translate(MiddleBody:getPosition())
+  love.graphics.polygon('line', MiddleShape:getPoints())
+  love.graphics.pop()
+
+  for key, crate in pairs(Crates) do crate:draw() end
 
   local mousex, mousey = GetRelativeMouse()
   love.graphics.circle('line', mousex, mousey, 23)
