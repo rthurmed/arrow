@@ -36,13 +36,18 @@ function love.load()
   RightSideFixture = love.physics.newFixture(RightSideBody, RightSideShape)
   RightSideFixture:setCategory(Categories.wall)
 
-  MiddleBody = love.physics.newBody(World, 500, 500, "static")
-  MiddleShape = love.physics.newRectangleShape(100, 100)
+  MiddleBody = love.physics.newBody(World, 500, 300, "static")
+  MiddleShape = love.physics.newRectangleShape(200, 200)
   MiddleFixture = love.physics.newFixture(MiddleBody, MiddleShape)
   MiddleFixture:setCategory(Categories.wall)
 
+  MiddleBody2 = love.physics.newBody(World, 1200, 400, "static")
+  MiddleShape2 = love.physics.newRectangleShape(150, 150)
+  MiddleFixture2 = love.physics.newFixture(MiddleBody2, MiddleShape2)
+  MiddleFixture2:setCategory(Categories.wall)
+
   Crates = {
-    Crate:new(World, 500, 400, 50, 50),
+    Crate:new(World, 500, 200, 50, 50),
     Crate:new(World, 800, 400, 100, 100),
     Crate:new(World, 850, 100, 100, 100),
     Crate:new(World, 900, 400, 100, 100)
@@ -111,6 +116,11 @@ function love.draw()
   love.graphics.push()
   love.graphics.translate(MiddleBody:getPosition())
   love.graphics.polygon('line', MiddleShape:getPoints())
+  love.graphics.pop()
+
+  love.graphics.push()
+  love.graphics.translate(MiddleBody2:getPosition())
+  love.graphics.polygon('line', MiddleShape2:getPoints())
   love.graphics.pop()
 
   for key, crate in pairs(Crates) do crate:draw() end
