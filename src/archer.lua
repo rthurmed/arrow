@@ -56,7 +56,7 @@ function Archer:updateMovement(dt)
     self.body:setY(self.body:getY() - Archer.JUMP_MAX_HEIGHT * dt)
   end
 
-  if love.keyboard.isDown('q') and not self.rope:isDestroyed() then
+  if love.keyboard.isDown('q') and self.rope ~= nil and not self.rope:isDestroyed() then
     self.rope:destroy()
   end
 
