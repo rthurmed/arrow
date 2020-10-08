@@ -3,10 +3,10 @@ Categories = require('src.categories')
 
 Archer = {}
 
-Archer.ROPE_PULL_SPEED = 400
+Archer.ROPE_PULL_SPEED = 800
 Archer.ROPE_MIN_LENGTH = 100
 Archer.ROPE_MAX_LENGTH = 1200
-Archer.JUMP_MAX_HEIGHT = 1000
+Archer.JUMP_MAX_HEIGHT = 1200
 
 function Archer:new(world, x, y)
   local that = {}
@@ -16,7 +16,7 @@ function Archer:new(world, x, y)
   that.h = 72
   that.w = 72
 
-  that.speed = 100
+  that.speed = 1/2
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
   that.shape = love.physics.newRectangleShape(that.w, that.h)
@@ -47,8 +47,8 @@ function Archer:updateMovement(dt)
   if love.keyboard.isDown('a') then mx = -1 end
   if love.keyboard.isDown('d') then mx =  1 end
 
-  local dx = mx * dt * self.speed
-  local dy = my * dt * self.speed
+  local dx = mx * dt * self.speed * love.physics.getMeter()
+  local dy = my * dt * self.speed * love.physics.getMeter()
 
   self.body:applyLinearImpulse(dx, dy)
 
@@ -146,7 +146,8 @@ function Archer:draw()
       fireStrength = self.fireStrength,
       arrow = #self.arrows,
       position = cx .. ', ' .. cy,
-      rope = self.rope and not self.rope:isDestroyed() and self.rope:getMaxLength() or 0
+      rope = self.rope and not self.rope:isDestroyed() and self.rope:getMaxLength() or 0,
+      mass = self.body:getMass()
     })
   end
 end
