@@ -6,7 +6,7 @@ Archer = {}
 Archer.ROPE_PULL_SPEED = 800
 Archer.ROPE_MIN_LENGTH = 100
 Archer.ROPE_MAX_LENGTH = 1200
-Archer.JUMP_MAX_HEIGHT = 1200
+Archer.JUMP_MAX_HEIGHT = 900
 
 function Archer:new(world, x, y)
   local that = {}
