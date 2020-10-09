@@ -155,7 +155,8 @@ end
 function GetCameraPosition()
   local px, py = Player.body:getPosition()
   local ww, wh = love.window.getMode()
-  return ww / 2 - px, love.graphics.getHeight() * 0.7 - py
+  local mx, my = love.mouse.getPosition()
+  return ww / 2 - px - mx / 4, love.graphics.getHeight() * 0.7 - py - my / 4
 end
 
 function GetRelativeMouse()
