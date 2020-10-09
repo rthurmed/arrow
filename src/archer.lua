@@ -16,7 +16,7 @@ function Archer:new(world, x, y)
   that.h = 72
   that.w = 72
 
-  that.speed = 1/2
+  that.speed = 1
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
   that.shape = love.physics.newRectangleShape(that.w, that.h)
@@ -33,10 +33,16 @@ function Archer:new(world, x, y)
   that.fireDelay = 1 -- seconds
   that.fireStrength = 0
 
+  that.flightTime = 0
+
   that.rope = nil
 
   self.__index = self
   return setmetatable(that, self)
+end
+
+function Archer:isOnAir()
+  return #self.body:getContacts() == 0
 end
 
 function Archer:updateMovement(dt)
@@ -52,8 +58,11 @@ function Archer:updateMovement(dt)
 
   self.body:applyLinearImpulse(dx, dy)
 
-  if love.keyboard.isDown('space') then
+  if love.keyboard.isDown('space') and (not self:isOnAir() or self.flightTime > 0) then
     self.body:setY(self.body:getY() - Archer.JUMP_MAX_HEIGHT * dt)
+    self.flightTime = self.flightTime + dt
+  else
+    self.flightTime = 0
   end
 
   if love.keyboard.isDown('q') and self.rope ~= nil and not self.rope:isDestroyed() then
