@@ -8,6 +8,8 @@ Archer.ROPE_MIN_LENGTH = 100
 Archer.ROPE_MAX_LENGTH = 1200
 Archer.JUMP_MAX_HEIGHT = 900
 
+Archer.STRENGTH_PULL_TIME = 1 -- seconds for max power
+
 function Archer:new(world, x, y)
   local that = {}
 
@@ -109,9 +111,9 @@ function Archer:updateShooting(dt)
   end
 
   if self.fireDelay <= 0 and love.mouse.isDown(1) then
-    self.fireStrength = self.fireStrength + dt * 4
-    if self.fireStrength > 1 then
-      self.fireStrength = 1
+    self.fireStrength = self.fireStrength + dt
+    if self.fireStrength > Archer.STRENGTH_PULL_TIME then
+      self.fireStrength = Archer.STRENGTH_PULL_TIME
     end
   end
 
@@ -119,7 +121,7 @@ function Archer:updateShooting(dt)
     local mousex, mousey = GetRelativeMouse()
     local playerx, playery = self.body:getWorldCenter()
 
-    local arrow = Arrow:new(World, playerx, playery, mousex, mousey, self.fireStrength)
+    local arrow = Arrow:new(World, playerx, playery, mousex, mousey, self.fireStrength / Archer.STRENGTH_PULL_TIME)
     table.insert(self.arrows, arrow)
 
     self.lastArrow = arrow

@@ -127,7 +127,7 @@ function love.draw()
 
   local mousex, mousey = GetRelativeMouse()
   love.graphics.circle('line', mousex, mousey, 23)
-  love.graphics.circle('fill', mousex, mousey, Player.fireStrength * 20)
+  love.graphics.circle('fill', mousex, mousey, Player.fireStrength / Player.STRENGTH_PULL_TIME * 20)
 
   love.graphics.pop()
 
