@@ -84,14 +84,18 @@ function Archer:updateRope(dt)
   if self.rope ~= nil and not self.rope:isDestroyed() then
     local nlen = self.rope:getMaxLength() + ry * dt * Archer.ROPE_PULL_SPEED
 
-    if nlen > Archer.ROPE_MIN_LENGTH and nlen < Archer.ROPE_MAX_LENGTH then
-      self.rope:setMaxLength(nlen)
+    if nlen < Archer.ROPE_MIN_LENGTH then
+      nlen = Archer.ROPE_MIN_LENGTH
     end
-  end
 
-  -- Executed when the rope arrow weld itself to a wall
-  if self.isRopeArrowFlying and not self.lastArrow.flying then
-    if self.rope ~= nil and not self.rope:isDestroyed() then
+    if nlen > Archer.ROPE_MAX_LENGTH then
+      nlen = Archer.ROPE_MAX_LENGTH
+    end
+
+    self.rope:setMaxLength(nlen)
+
+    -- Executed when the rope arrow weld itself to a wall
+    if self.isRopeArrowFlying and not self.lastArrow.flying then
       local px, py = self.body:getPosition()
       local ax, ay = self.lastArrow.body:getPosition()
       local distance = Util.distance(px, py, ax, ay)
