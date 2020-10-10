@@ -16,6 +16,8 @@ function Archer:new(world, x, y)
   that.h = 72
   that.w = 72
 
+  -- TODO: Make the player be a standing rectangle, instead of a square
+
   that.speed = 1
 
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
@@ -36,6 +38,8 @@ function Archer:new(world, x, y)
   that.flightTime = 0
 
   that.rope = nil
+  that.lastArrow = nil
+  that.isRopeArrowFlying = false
 
   self.__index = self
   return setmetatable(that, self)
@@ -46,10 +50,8 @@ function Archer:isOnAir()
 end
 
 function Archer:updateMovement(dt)
-  local mx, my, ry = 0, 0 , 0
+  local mx, my = 0, 0
 
-  if love.keyboard.isDown('w') then ry = -1 end
-  if love.keyboard.isDown('s') then ry =  1 end
   if love.keyboard.isDown('a') then mx = -1 end
   if love.keyboard.isDown('d') then mx =  1 end
 
@@ -64,9 +66,17 @@ function Archer:updateMovement(dt)
   else
     self.flightTime = 0
   end
+end
+
+function Archer:updateRope(dt)
+  local ry = 0
+
+  if love.keyboard.isDown('w') then ry = -1 end
+  if love.keyboard.isDown('s') then ry =  1 end
 
   if love.keyboard.isDown('q') and self.rope ~= nil and not self.rope:isDestroyed() then
     self.rope:destroy()
+    self.isRopeArrowFlying = false
   end
 
   if self.rope ~= nil and not self.rope:isDestroyed() then
@@ -74,6 +84,18 @@ function Archer:updateMovement(dt)
 
     if nlen > Archer.ROPE_MIN_LENGTH and nlen < Archer.ROPE_MAX_LENGTH then
       self.rope:setMaxLength(nlen)
+    end
+  end
+
+  -- Executed when the rope arrow weld itself to a wall
+  if self.isRopeArrowFlying and not self.lastArrow.flying then
+    if self.rope ~= nil and not self.rope:isDestroyed() then
+      local px, py = self.body:getPosition()
+      local ax, ay = self.lastArrow.body:getPosition()
+      local distance = Util.distance(px, py, ax, ay)
+
+      self.rope:setMaxLength(distance)
+      self.isRopeArrowFlying = false
     end
   end
 end
@@ -100,6 +122,9 @@ function Archer:updateShooting(dt)
     local arrow = Arrow:new(World, playerx, playery, mousex, mousey, self.fireStrength)
     table.insert(self.arrows, arrow)
 
+    self.lastArrow = arrow
+    self.isRopeArrowFlying = true
+
     if self.rope ~= nil and not self.rope:isDestroyed() then
       self.rope:destroy()
     end
@@ -115,6 +140,7 @@ end
 
 function Archer:update(dt)
   self:updateMovement(dt)
+  self:updateRope(dt)
   self:updateShooting(dt)
 end
 
