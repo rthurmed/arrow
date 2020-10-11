@@ -61,6 +61,9 @@ function love.load()
 
   Paused = false
 
+  LastMouseX = 0
+  LastMouseY = 0
+
   Logger = Log:new()
 end
 
@@ -79,6 +82,7 @@ function love.keyreleased(key)
   end
 
   if key == 'p' then
+    love.mouse.setRelativeMode(Paused)
     Paused = not Paused
   end
 end
@@ -96,6 +100,10 @@ function love.update(dt)
   Player:update(dt)
 
   World:update(dt)
+
+  if not Paused then
+    LastMouseX, LastMouseY = love.mouse.getPosition()
+  end
 end
 
 function love.draw()
@@ -155,12 +163,18 @@ end
 function GetCameraPosition()
   local px, py = Player.body:getPosition()
   local ww, wh = love.window.getMode()
-  local mx, my = love.mouse.getPosition()
-  return ww / 2 - px - mx / 4, love.graphics.getHeight() * 0.7 - py - my / 4
+  local mx, my = LastMouseX, LastMouseY
+
+  local mouseMoveRatio = 1 / 4
+
+  local x = ww / 2 - px - mx * mouseMoveRatio
+  local y = wh * 0.7 - py - my * mouseMoveRatio
+
+  return x, y
 end
 
 function GetRelativeMouse()
-  local mousex, mousey = love.mouse.getPosition()
+  local mousex, mousey = LastMouseX, LastMouseY
   local dx, dy = GetCameraPosition()
   return mousex - dx, mousey - dy
 end
