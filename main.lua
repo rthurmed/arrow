@@ -1,5 +1,4 @@
 Util = require('util')
-Log = require('log')
 
 Arrow = require('src.arrow')
 Archer = require('src.archer')
@@ -63,8 +62,6 @@ function love.load()
 
   LastMouseX = 0
   LastMouseY = 0
-
-  Logger = Log:new()
 end
 
 -- function love.wheelmoved(x, y)
@@ -162,12 +159,11 @@ function love.draw()
 
   local px, py = Player.body:getPosition()
   if DEBUG then
-    Logger.info = {
+    Util.log(0, 0, {
       dt = LastDt,
       time = TimePassed,
       FPS = love.timer.getFPS()
-    }
-    Logger:draw()
+    })
   end
 end
 
