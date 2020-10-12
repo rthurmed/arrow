@@ -31,9 +31,13 @@ function Arrow:new(world, x, y, dx, dy, strength)
   that.fixture:setCategory(Categories.arrow)
   that.fixture:setMask(Categories.player, Categories.arrow)
 
+  that.body:setAngle(that.angle)
   that.body:applyLinearImpulse(that.dx, that.dy)
 
   that.joint = nil
+
+  that.lastX = 0
+  that.lastY = 0
 
   self.__index = self
   return setmetatable(that, self)
@@ -49,6 +53,8 @@ function Arrow:weld()
 end
 
 function Arrow:update(dt)
+  local ax, ay = self.body:getPosition()
+
   if self.flying and #self.body:getContacts() > 0 then
     self:weld()
 
@@ -61,15 +67,19 @@ function Arrow:update(dt)
     return
   end
 
-  self.angle = self.angle + Arrow.DECAY * dt
+  local angle = math.atan2((ay - self.lastY), (ax - self.lastX))
+  self.body:setAngle(angle)
+
   Util.advanceAnimationFrame(self.animation, dt)
+
+  self.lastX, self.lastY = self.body:getPosition()
 end
 
 function Arrow:draw()
   local cx, cy = self.body:getPosition()
   local aimx, aimy = cx + self.dx / 2, cy + self.dy / 2
   local halfw = self.w / 2
-  local rotation = self.angle + math.rad(90)
+  local rotation = self.body:getAngle() + math.rad(90)
 
   local spriteNum = math.floor(self.animation.currentTime / self.animation.duration * #self.animation.quads) + 1
   love.graphics.draw(self.animation.spriteSheet, self.animation.quads[spriteNum], cx, cy, rotation, 1, 1, halfw, halfw)
