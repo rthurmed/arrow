@@ -133,18 +133,21 @@ function love.draw()
 
   for key, crate in pairs(Crates) do crate:draw() end
 
+  -- GUI
   local mousex, mousey = GetRelativeMouse()
-  love.graphics.circle('line', mousex, mousey, 23)
-  love.graphics.circle('fill', mousex, mousey, Player.fireStrength / Player.STRENGTH_PULL_TIME * 20)
+  local reticleSize = 20
+
+  if Player.fireDelay == 0 then
+    love.graphics.setColor(1, 1, 1, 0.75)
+  else
+    love.graphics.setColor(214 / 255, 37 / 255, 80 / 255, 0.75)
+  end
+
+  love.graphics.circle('fill', mousex, mousey, Player.fireStrength / Player.STRENGTH_PULL_TIME * reticleSize)
+  love.graphics.circle('fill', mousex, mousey, Player.fireDelay * reticleSize)
+  love.graphics.circle('line', mousex, mousey, reticleSize + 3)
 
   love.graphics.pop()
-
-  -- GUI
-
-  -- Delay Graphic Representation
-  love.graphics.setColor(214 / 255, 37 / 255, 80 / 255, 0.75)
-  local height = Player.fireDelay * love.graphics.getHeight()
-  love.graphics.rectangle('fill', 0, love.graphics.getHeight() - height, 20, height)
 
   -- Pause text
   if Paused then
