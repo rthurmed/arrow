@@ -3,7 +3,8 @@ Categories = {
   player = 2,
   arrow = 3,
   wall = 4,
-  prop = 5
+  prop = 5,
+  ignore = 6
 }
 
 return Categories

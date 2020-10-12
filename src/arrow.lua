@@ -29,7 +29,7 @@ function Arrow:new(world, x, y, dx, dy, strength)
   that.shape = love.physics.newCircleShape(that.w / 2)
   that.fixture = love.physics.newFixture(that.body, that.shape)
   that.fixture:setCategory(Categories.arrow)
-  that.fixture:setMask(Categories.player, Categories.arrow)
+  that.fixture:setMask(Categories.player, Categories.arrow, Categories.ignore)
 
   that.body:setAngle(that.angle)
   that.body:applyLinearImpulse(that.dx, that.dy)
@@ -60,6 +60,7 @@ function Arrow:update(dt)
 
     if self.joint ~= nil then
       self.flying = false
+      self.fixture:setCategory(Categories.ignore)
     end
   end
 

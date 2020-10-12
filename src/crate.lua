@@ -7,6 +7,7 @@ function Crate:new(world, x, y, h, w)
   that.shape = love.physics.newRectangleShape(h, w)
   that.fixture = love.physics.newFixture(that.body, that.shape)
   that.fixture:setCategory(Categories.prop)
+  that.fixture:setMask(Categories.ignore)
 
   self.__index = self
   return setmetatable(that, self)

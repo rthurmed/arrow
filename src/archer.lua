@@ -26,6 +26,7 @@ function Archer:new(world, x, y)
   that.shape = love.physics.newRectangleShape(that.w, that.h)
   that.fixture = love.physics.newFixture(that.body, that.shape)
   that.fixture:setCategory(Categories.player)
+  that.fixture:setMask(Categories.ignore)
 
   that.bow = {
     i0 = love.graphics.newImage('assets/bow0.png'),
