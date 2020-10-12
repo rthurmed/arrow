@@ -2,6 +2,7 @@ Util = require('util')
 
 Arrow = require('src.arrow')
 Archer = require('src.archer')
+Bow = require('src.bow')
 Crate = require('src.crate')
 Categories = require('src.categories')
 
@@ -134,14 +135,14 @@ function love.draw()
   local mousex, mousey = GetRelativeMouse()
   local reticleSize = 20
 
-  if Player.fireDelay == 0 then
+  if Player.bow.delay == 0 then
     love.graphics.setColor(1, 1, 1, 0.75)
   else
     love.graphics.setColor(214 / 255, 37 / 255, 80 / 255, 0.75)
   end
 
-  love.graphics.circle('fill', mousex, mousey, Player.fireStrength / Player.STRENGTH_PULL_TIME * reticleSize)
-  love.graphics.circle('fill', mousex, mousey, Player.fireDelay * reticleSize)
+  love.graphics.circle('fill', mousex, mousey, Player.bow.pullStrength / Bow.STRENGTH_PULL_TIME * reticleSize)
+  love.graphics.circle('fill', mousex, mousey, Player.bow.delay * reticleSize)
   love.graphics.circle('line', mousex, mousey, reticleSize + 3)
 
   love.graphics.pop()
