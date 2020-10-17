@@ -14,8 +14,8 @@ function love.load()
   love.mouse.setRelativeMode(true)
   math.randomseed(6073061030592339)
 
-  love.physics.setMeter(200)
-  World = love.physics.newWorld(0, 9.81*200, false)
+  love.physics.setMeter(180)
+  World = love.physics.newWorld(0, 9.81 * love.physics.getMeter(), false)
 
   PlayerX, PlayerY = 300, 300
 

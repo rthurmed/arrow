@@ -4,7 +4,7 @@ Categories = require('src.categories')
 
 Archer = {}
 
-Archer.JUMP_MAX_HEIGHT = 900
+Archer.JUMP_STRENGTH = 60
 
 function Archer:new(world, x, y)
   local that = {}
@@ -32,8 +32,22 @@ function Archer:new(world, x, y)
   return setmetatable(that, self)
 end
 
-function Archer:isOnAir()
-  return #self.body:getContacts() == 0
+function Archer:isOnGround()
+  local px, py = self.body:getPosition()
+
+  -- Search for contact with horizontal surfaces
+  for key, contact in pairs(self.body:getContacts()) do
+    local x1, y1, x2, y2 = contact:getPositions()
+    if contact:isTouching() and x1 ~= nil and y1 ~= nil and x2 ~= nil and y2 ~= nil then
+      local angle = math.abs(Util.angleBetween(x1, y1, x2, y2))
+      -- 30º of difference are used to include slopes
+      if angle < math.rad(180 + 30) and angle > math.rad(180 - 30) and py < y1 then
+        return true
+      end
+    end
+  end
+
+  return false
 end
 
 function Archer:updateMovement(dt)
@@ -47,8 +61,8 @@ function Archer:updateMovement(dt)
 
   self.body:applyLinearImpulse(dx, dy)
 
-  if love.keyboard.isDown('space') and (not self:isOnAir() or self.flightTime > 0) then
-    self.body:setY(self.body:getY() - Archer.JUMP_MAX_HEIGHT * dt)
+  if love.keyboard.isDown('space') and self:isOnGround() then
+    self.body:applyLinearImpulse(0, -Archer.JUMP_STRENGTH)
     self.flightTime = self.flightTime + dt
   else
     self.flightTime = 0
@@ -76,6 +90,20 @@ function Archer:draw()
   self.bow:draw()
 
   if DEBUG then
+    love.graphics.setColor(1, 0, 0, 1)
+    for key, contact in pairs(self.body:getContacts()) do
+      if contact:isTouching() then
+        local x1, y1, x2, y2 = contact:getPositions()
+        if x1 ~= nil and x2 ~= nil then
+          love.graphics.line(x1, y1, x2, y2)
+          Util.log(x2, y2, {
+            angle = Util.angleBetween(x1, y1, x2, y2)
+          })
+        end
+      end
+    end
+    love.graphics.setColor(1, 1, 1, 1)
+
     Util.log(cx, cy, {
       con = #self.body:getContacts(),
       fireDelay = self.bow.delay,
@@ -83,7 +111,8 @@ function Archer:draw()
       arrow = #self.bow.arrows,
       position = cx .. ', ' .. cy,
       rope = self.bow.rope and not self.bow.rope:isDestroyed() and self.bow.rope:getMaxLength() or 0,
-      mass = self.body:getMass()
+      mass = self.body:getMass(),
+      isOnGround = self:isOnGround() and 1 or 0
     })
   end
 end

@@ -31,6 +31,10 @@ function Util.distance(x1, y1, x2, y2)
   return math.sqrt (dx * dx + dy * dy)
 end
 
+function Util.angleBetween(x1, y1, x2, y2)
+  return math.atan2((y2 - y1), (x2 - x1))
+end
+
 function Util.log(x, y, table)
   local i = 0
   for key, value in pairs(table) do
