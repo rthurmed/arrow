@@ -6,6 +6,8 @@ Bow.ROPE_MAX_LENGTH = 1200
 
 Bow.STRENGTH_PULL_TIME = 1 -- seconds for max power
 
+RopeKnot = love.graphics.newImage('assets/knot.png')
+
 function Bow:new(world, player)
   local that = {}
 
@@ -117,8 +119,25 @@ function Bow:draw()
   local halfw = self.player.w / 2
   local angle = math.atan2((my - cy), (mx - cx)) + math.rad(45)
 
+  -- rope
+  if self.rope ~= nil and not self.rope:isDestroyed() then
+    love.graphics.push()
+    love.graphics.translate(cx, cy)
+
+    local ax, ay, bx, by = self.rope:getAnchors()
+    love.graphics.rotate(math.atan2((ay - by), (ax - bx)) + math.rad(90))
+
+    for i = 1, Util.distance(ax, ay, bx, by), 5 do
+      love.graphics.draw(RopeKnot, 0, i)
+    end
+
+    love.graphics.pop()
+  end
+
+  -- arrows
   for key, arrow in pairs(self.arrows) do arrow:draw() end
 
+  -- bow
   local bowImage = self.image.i0
 
   if self.pullStrength > 1 / 2 then
@@ -131,8 +150,10 @@ function Bow:draw()
 
   love.graphics.draw(bowImage, cx, cy, angle, 1, 1, halfw, halfw)
 
-  if self.rope ~= nil and not self.rope:isDestroyed() then
-    love.graphics.line(self.rope:getAnchors())
+  if DEBUG then
+    if self.rope ~= nil and not self.rope:isDestroyed() then
+      love.graphics.line(self.rope:getAnchors())
+    end
   end
 end
 
