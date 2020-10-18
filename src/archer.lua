@@ -84,6 +84,7 @@ function Archer:draw()
   -- Move to debug when with sprites
   love.graphics.push()
   love.graphics.translate(self.body:getPosition())
+  love.graphics.rotate(self.body:getAngle())
   love.graphics.polygon('line', self.shape:getPoints())
   love.graphics.pop()
 

@@ -19,6 +19,7 @@ end
 function Crate:draw()
   love.graphics.push()
   love.graphics.translate(self.body:getPosition())
+  love.graphics.rotate(self.body:getAngle())
   love.graphics.polygon('line', self.shape:getPoints())
   love.graphics.pop()
 end
