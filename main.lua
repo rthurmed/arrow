@@ -1,10 +1,5 @@
 Util = require('util')
-
-Arrow = require('src.arrow')
-Archer = require('src.archer')
-Bow = require('src.bow')
-Crate = require('src.crate')
-Categories = require('src.categories')
+TestStage = require('src.stage.TestStage')
 
 DEBUG = os.getenv("DEBUG") or false
 VOLUME = os.getenv("VOLUME") or 1
@@ -17,41 +12,8 @@ function love.load()
   love.physics.setMeter(180)
   World = love.physics.newWorld(0, 9.81 * love.physics.getMeter(), false)
 
-  PlayerX, PlayerY = 300, 300
-
-  Player = Archer:new(World, PlayerX, PlayerY)
-
-  FloorBody = love.physics.newBody(World, 0, 0, "static")
-  FloorShape = love.physics.newEdgeShape(0, 800, 1400, 800)
-  FloorFixture = love.physics.newFixture(FloorBody, FloorShape)
-  FloorFixture:setCategory(Categories.wall)
-
-  LeftSideBody = love.physics.newBody(World, 0, 0, "static")
-  LeftSideShape = love.physics.newEdgeShape(0, 0, 0, 800)
-  LeftSideFixture = love.physics.newFixture(LeftSideBody, LeftSideShape)
-  LeftSideFixture:setCategory(Categories.wall)
-
-  RightSideBody = love.physics.newBody(World, 0, 0, "static")
-  RightSideShape = love.physics.newEdgeShape(1400, 0, 1400, 800)
-  RightSideFixture = love.physics.newFixture(RightSideBody, RightSideShape)
-  RightSideFixture:setCategory(Categories.wall)
-
-  MiddleBody = love.physics.newBody(World, 500, 300, "static")
-  MiddleShape = love.physics.newRectangleShape(200, 200)
-  MiddleFixture = love.physics.newFixture(MiddleBody, MiddleShape)
-  MiddleFixture:setCategory(Categories.wall)
-
-  MiddleBody2 = love.physics.newBody(World, 1200, 400, "static")
-  MiddleShape2 = love.physics.newRectangleShape(150, 150)
-  MiddleFixture2 = love.physics.newFixture(MiddleBody2, MiddleShape2)
-  MiddleFixture2:setCategory(Categories.wall)
-
-  Crates = {
-    Crate:new(World, 500, 200, 50, 50),
-    Crate:new(World, 800, 400, 100, 100),
-    Crate:new(World, 850, 100, 100, 100),
-    Crate:new(World, 900, 400, 100, 100)
-  }
+  StageInst = TestStage:new(World)
+  StageInst:start()
 
   Zoom = 1
   IsFullscreen = false
@@ -95,8 +57,7 @@ function love.update(dt)
 
   IsFullscreen = love.window.getFullscreen()
 
-  Player:update(dt)
-
+  StageInst:update(dt)
   World:update(dt)
 
   if not Paused then
@@ -113,37 +74,7 @@ function love.draw()
 
   -- Camera
   love.graphics.translate(GetCameraPosition())
-
-  Player:draw()
-  love.graphics.line(FloorShape:getPoints())
-  love.graphics.line(LeftSideShape:getPoints())
-  love.graphics.line(RightSideShape:getPoints())
-
-  love.graphics.push()
-  love.graphics.translate(MiddleBody:getPosition())
-  love.graphics.polygon('line', MiddleShape:getPoints())
-  love.graphics.pop()
-
-  love.graphics.push()
-  love.graphics.translate(MiddleBody2:getPosition())
-  love.graphics.polygon('line', MiddleShape2:getPoints())
-  love.graphics.pop()
-
-  for key, crate in pairs(Crates) do crate:draw() end
-
-  -- GUI
-  local mousex, mousey = GetRelativeMouse()
-  local reticleSize = 20
-
-  if Player.bow.delay == 0 then
-    love.graphics.setColor(1, 1, 1, 0.75)
-  else
-    love.graphics.setColor(214 / 255, 37 / 255, 80 / 255, 0.75)
-  end
-
-  love.graphics.circle('fill', mousex, mousey, Player.bow.pullStrength / Bow.STRENGTH_PULL_TIME * reticleSize)
-  love.graphics.circle('fill', mousex, mousey, Player.bow.delay * reticleSize)
-  love.graphics.circle('line', mousex, mousey, reticleSize + 3)
+  StageInst:draw()
 
   love.graphics.pop()
 
@@ -158,7 +89,6 @@ function love.draw()
 
   love.graphics.setColor(1, 1, 1, 1)
 
-  local px, py = Player.body:getPosition()
   if DEBUG then
     Util.log(0, 0, {
       dt = LastDt,
@@ -170,7 +100,7 @@ end
 
 
 function GetCameraPosition()
-  local px, py = Player.body:getPosition()
+  local px, py = StageInst.super.player.body:getPosition()
   local ww, wh = love.window.getMode()
   local mx, my = LastMouseX, LastMouseY
 

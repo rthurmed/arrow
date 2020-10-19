@@ -6,10 +6,11 @@ Archer = {}
 
 Archer.JUMP_STRENGTH = 60
 
-function Archer:new(world, x, y)
+function Archer:new(world, stage, x, y)
   local that = {}
 
   that.world = world
+  that.stage = stage
 
   that.h = 72
   that.w = 72
@@ -90,6 +91,23 @@ function Archer:draw()
 
   self.bow:draw()
 
+  -- GUI
+  local mousex, mousey = GetRelativeMouse()
+  local reticleSize = 20
+
+  if self.bow.delay == 0 then
+    love.graphics.setColor(1, 1, 1, 0.75)
+  else
+    love.graphics.setColor(214 / 255, 37 / 255, 80 / 255, 0.75)
+  end
+
+  love.graphics.circle('fill', mousex, mousey, self.bow.pullStrength / Bow.STRENGTH_PULL_TIME * reticleSize)
+  love.graphics.circle('fill', mousex, mousey, self.bow.delay * reticleSize)
+  love.graphics.circle('line', mousex, mousey, reticleSize + 3)
+
+  love.graphics.setColor(1, 1, 1, 1)
+
+  -- DEBUG
   if DEBUG then
     love.graphics.setColor(1, 0, 0, 1)
     for key, contact in pairs(self.body:getContacts()) do
