@@ -4,7 +4,7 @@ Categories = require('src.categories')
 
 Archer = {}
 
-Archer.JUMP_STRENGTH = 60
+Archer.JUMP_STRENGTH = 40
 
 function Archer:new(world, stage, x, y)
   local that = {}
@@ -13,9 +13,7 @@ function Archer:new(world, stage, x, y)
   that.stage = stage
 
   that.h = 72
-  that.w = 72
-
-  -- TODO: Make the player be a standing rectangle, instead of a square
+  that.w = 48
 
   that.speed = 1
 
@@ -77,6 +75,7 @@ function Archer:update(dt)
 
   self:updateMovement(dt)
   self.bow:update(dt)
+  self.body:setAngle(math.rad(0))
 end
 
 function Archer:draw()

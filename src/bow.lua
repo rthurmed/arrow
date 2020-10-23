@@ -14,6 +14,9 @@ function Bow:new(world, player)
   that.world = world
   that.player = player
 
+  that.h = 72
+  that.w = 72
+
   that.image = {
     i0 = love.graphics.newImage('assets/bow0.png'),
     i50 = love.graphics.newImage('assets/bow50.png'),
@@ -116,7 +119,8 @@ end
 function Bow:draw()
   local cx, cy = self.player.body:getWorldCenter()
   local mx, my = GetRelativeMouse()
-  local halfw = self.player.w / 2
+  local offsetX = self.w * 0.5
+  local offsetY = self.h * 0.5
   local angle = math.atan2((my - cy), (mx - cx)) + math.rad(45)
 
   -- rope
@@ -148,7 +152,7 @@ function Bow:draw()
     bowImage = self.image.i100
   end
 
-  love.graphics.draw(bowImage, cx, cy, angle, 1, 1, halfw, halfw)
+  love.graphics.draw(bowImage, cx, cy, angle, 1, 1, offsetX, offsetY)
 
   if DEBUG then
     if self.rope ~= nil and not self.rope:isDestroyed() then
