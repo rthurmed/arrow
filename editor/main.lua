@@ -90,6 +90,10 @@ function love.draw()
     DrawingType = DrawingType,
     WallCount = #StageInst.super.walls
   })
+
+  love.graphics.print('Right mouse to create walls.', 10, love.graphics.getHeight() - 55)
+  love.graphics.print('Middle mouse to drag view.', 10, love.graphics.getHeight() - 40)
+  love.graphics.print('ESC to cancel. RETURN to finish.', 10, love.graphics.getHeight() - 25)
 end
 
 function GetRelativeMouse()
