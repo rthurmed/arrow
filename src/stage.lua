@@ -26,4 +26,20 @@ function Stage:draw()
   self.player:draw()
 end
 
+function Stage:start()
+  --
+end
+
+function Stage:kill()
+  for key, ent in pairs(self.walls)     do ent.body:setActive(false) end
+  for key, ent in pairs(self.crates)    do ent.body:setActive(false) end
+  for key, ent in pairs(self.rectWalls) do ent.body:setActive(false) end
+  self.player.body:setActive(false)
+
+  for i = 1, #self.walls, 1     do self.walls[i] = nil     end
+  for i = 1, #self.crates, 1    do self.crates[i] = nil    end
+  for i = 1, #self.rectWalls, 1 do self.rectWalls[i] = nil end
+  self.player = nil
+end
+
 return Stage

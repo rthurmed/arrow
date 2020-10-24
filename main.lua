@@ -41,6 +41,11 @@ function love.keyreleased(key)
     love.window.setFullscreen(not IsFullscreen, 'desktop')
   end
 
+  if key == 'r' then
+    StageInst:kill()
+    StageInst:start()
+  end
+
   if key == 'p' then
     love.mouse.setRelativeMode(Paused)
     Paused = not Paused
