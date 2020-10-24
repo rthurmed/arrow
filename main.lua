@@ -10,7 +10,7 @@ function love.load()
   math.randomseed(6073061030592339)
 
   love.physics.setMeter(180)
-  World = love.physics.newWorld(0, 9.81 * love.physics.getMeter(), false)
+  World = love.physics.newWorld(0, 9.81 * love.physics.getMeter(), true)
 
   StageInst = TestStage:new(World)
   StageInst:start()

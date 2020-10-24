@@ -15,13 +15,12 @@ function Archer:new(world, stage, x, y)
   that.h = 72
   that.w = 48
 
-  that.speed = 1
-
   that.body = love.physics.newBody(that.world, x, y, "dynamic")
   that.shape = love.physics.newRectangleShape(that.w, that.h)
   that.fixture = love.physics.newFixture(that.body, that.shape)
   that.fixture:setCategory(Categories.player)
   that.fixture:setMask(Categories.ignore)
+  that.body:setSleepingAllowed(false)
 
   that.flightTime = 0
 
@@ -55,16 +54,24 @@ function Archer:updateMovement(dt)
   if love.keyboard.isDown('a') then mx = -1 end
   if love.keyboard.isDown('d') then mx =  1 end
 
-  local dx = mx * dt * self.speed * love.physics.getMeter()
-  local dy = my * dt * self.speed * love.physics.getMeter()
-
-  self.body:applyLinearImpulse(dx, dy)
+  local dx = mx * dt * love.physics.getMeter()
+  local dy = my * dt * love.physics.getMeter()
 
   if love.keyboard.isDown('space') and self:isOnGround() then
     self.body:applyLinearImpulse(0, -Archer.JUMP_STRENGTH)
     self.flightTime = self.flightTime + dt
   else
     self.flightTime = 0
+  end
+
+  if self:isOnGround() then
+    self.body:setX(self.body:getX() + dx * 1.5)
+
+    if not love.keyboard.isDown('space') then
+      self.body:setLinearVelocity(0, 0)
+    end
+  else
+    self.body:applyLinearImpulse(dx * 0.8, dy)
   end
 end
 
