@@ -16,14 +16,19 @@ function Stage:new(world)
 end
 
 function Stage:update(dt)
-  self.player:update(dt)
+  if self.player ~= nil then    
+    self.player:update(dt)
+  end
 end
 
 function Stage:draw()
   for key, wall in pairs(self.walls) do wall:draw() end
   for key, crate in pairs(self.crates) do crate:draw() end
   for key, rectWall in pairs(self.rectWalls) do rectWall:draw() end
-  self.player:draw()
+
+  if self.player ~= nil then
+    self.player:draw()
+  end
 end
 
 function Stage:start()
@@ -34,7 +39,10 @@ function Stage:kill()
   for key, ent in pairs(self.walls)     do ent.body:setActive(false) end
   for key, ent in pairs(self.crates)    do ent.body:setActive(false) end
   for key, ent in pairs(self.rectWalls) do ent.body:setActive(false) end
-  self.player.body:setActive(false)
+
+  if self.player ~= nil then
+    self.player.body:setActive(false)
+  end
 
   for i = 1, #self.walls, 1     do self.walls[i] = nil     end
   for i = 1, #self.crates, 1    do self.crates[i] = nil    end
